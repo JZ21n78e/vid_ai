@@ -152,11 +152,9 @@ def status(render_id):
 
 if __name__ == '__main__':
     import time
-
-    request = {'title': 'CRypto-Currency', 'soundtrack': 'disco',
-    'input_text':'''there is a decline in bitcoin price nowadays.This is due to ongoing war between russia and ukraine.The market is also taking a toll. The dollar is facing inflation.Alleluia praise the Lord.'''
-                }
-
+    para = "Rabbit & tortoise decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under a tree and soon fell asleep."
+    request = {'title': 'Rabbit & tortoise', 'soundtrack': 'disco',
+    'input_text':para}
     response = submit(request)
     print(response)
     time.sleep(30)
