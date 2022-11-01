@@ -134,7 +134,7 @@ def submit(data):
         timeline = Timeline(
             background  = "#000000",
             soundtrack  = soundtrack,
-            tracks      = [Track(clips=[title_clip]), Track(clips=video_clips)]
+            tracks      = [Track(clips=video_clips),Track(clips=[title_clip])]
         )
 
         output = Output(
@@ -158,15 +158,9 @@ def status(render_id):
 
 
 if __name__ == '__main__':
-    import time
-    request = {'title': 'CRypto-Currency', 'soundtrack': 'melodic'}
-    response = submit(request)
-    print(response)
-    print(status(response.id))
-    print(f"DEBUG: status -> {response['status']}")
-    while response['status'] != 'done':
-        time.sleep(10)
-        print("DEBUG: WAITING 10 seconds")
-        print(status(response.id))
-
-    # print(status('93846c91-3e90-4347-9c30-0a085570ebfe'))
+    # import time
+    # request = {'title': 'CRypto-Currency', 'soundtrack': 'melodic'}
+    # response = submit(request)
+    # print(response)
+    # print(status(response.id))
+    print(status("a54576aa-3dc6-46fd-99a3-2276bd4d0118"))
