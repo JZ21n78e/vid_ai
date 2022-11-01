@@ -16,6 +16,7 @@ from shotstack_sdk.model.title_asset import TitleAsset
 from shotstack_sdk.model.video_asset import VideoAsset
 from shotstack_sdk.model.soundtrack  import Soundtrack
 from shotstack_sdk.model.transition  import Transition
+from shotstack_sdk.model.html_asset  import HtmlAsset
 
 from extract_keywords_for_each_sentence import our_keyword_extractor
 load_dotenv()
@@ -52,6 +53,8 @@ def pexel_searcher():
                     hd_file = entry
             if hd_file is None:
                 hd_file = videos[0]
+            
+            hd_file["keyword_caption"] = keyword # --------- testing keyword
         print(hd_file)
         print('-------------')
         pexel_videos.append(hd_file)
@@ -74,6 +77,7 @@ def submit(data):
     with shotstack.ApiClient(configuration) as api_client:
         api_instance = edit_api.EditApi(api_client)
         video_clips  = []
+        Caption_clips = []
 
         title_asset = TitleAsset(
             text        = data.get('title'),
@@ -107,10 +111,33 @@ def submit(data):
 
             if hd_file is None:
                 hd_file = videos[index]
+            
+            # ---CAPTIONS---------------
+            htmlAsset = HtmlAsset(
+            html      = f'<p>{video["keyword_caption"]}</p>',
+            css       = 'p { color: #ffffff; } b { color: #ffff00; }',
+            width     = 400,
+            height    = 200,
+            background= 'transparent',
+            position  = 'center'
+            )
 
+            Caption_clip = Clip(
+                asset     = htmlAsset,
+                start = video_start + (index * clip_length),
+                length    = clip_length,
+                fit       = 'crop',
+                scale     = 0.0,
+                position  = 'center',
+                opacity   = 1.0,
+            )
+
+            Caption_clips.append(Caption_clip)
+            
+            #-------VIDEO----------------
             video_asset = VideoAsset(
                 src = hd_file.get('link'),
-                trim= 1.0
+                trim= 2.0
             )
 
             video_clip = Clip(
@@ -134,7 +161,7 @@ def submit(data):
         timeline = Timeline(
             background  = "#000000",
             soundtrack  = soundtrack,
-            tracks      = [Track(clips=video_clips),Track(clips=[title_clip])]
+            tracks      = [Track(clips=Caption_clips),Track(clips=video_clips),Track(clips=[title_clip])]
         )
 
         output = Output(
@@ -163,4 +190,6 @@ if __name__ == '__main__':
     # response = submit(request)
     # print(response)
     # print(status(response.id))
-    print(status("a54576aa-3dc6-46fd-99a3-2276bd4d0118"))
+    print(status("6d06dbde-cc7b-49a2-88ac-ebe55a4222af"))
+    # var = pexel_searcher()
+    # print(var)
