@@ -31,17 +31,23 @@ api                     = Pexels(pexels_api_key)
 configuration = shotstack.Configuration(host = shotstack_url)
 configuration.api_key['DeveloperKey'] = shotstack_api_key
 
-def pexel_searcher():
-    para='there is a decline in bitcoin price nowadays. This is due to ongoing war between russia and ukraine. The market is also taking a toll. The dollar is facing inflation. Alleluia praise the Lord.'
+def pexel_searcher(para):
+    '''
+    for given para , uses nlp to find keywords and gets relevent assets from pixel
+    para: String
+    Output: list[Dict]
+    '''
+
+    # para='there is a decline in bitcoin price nowadays. This is due to ongoing war between russia and ukraine. The market is also taking a toll. The dollar is facing inflation. Alleluia praise the Lord.'
     # para = "They decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under the tree and soon fell asleep."
     # para = "The last goal doesn’t matter. The last victory, already forgotten. Yesterday is gone. Lost, in the record books. But today is up for grabs. Unpredictable. Unwritten. Undecided. “Now” is ours. Do something and be remembered. Or do nothing and be forgotten. No one owns today. Take it"
     print(para)
-    keyphrase,sentences = our_keyword_extractor(para=para)
+    keyphrases_list,sentences = our_keyword_extractor(para=para)
     pexels_api_key          = os.getenv("PEXELS_API_KEY")
     api                     = Pexels(pexels_api_key)
     pexel_videos = []
 
-    for sentence_index, keyword in enumerate(keyphrase):
+    for sentence_index, keyword in enumerate(keyphrases_list):
         hd_file = None    
         search_videos = api.search_videos(
             query           = keyword,
@@ -55,16 +61,15 @@ def pexel_searcher():
                     hd_file = entry
             if hd_file is None:
                 hd_file = videos[0]
-            
-            hd_file["keyword_caption"] = sentences[sentence_index] # --------- testing keyword
-        print(hd_file)
-        print('-------------')
+            hd_file['keyword_queried'] = keyword
+            hd_file["keyword_caption"] = sentences[sentence_index]
+        print(f"DEBUG: {hd_file} \n")
         pexel_videos.append(hd_file)
     return pexel_videos
 
 
 def submit(data):
-    pexel_videos = pexel_searcher()
+    pexel_videos = pexel_searcher(data.get('input_text'))
     min_clips   = 4.0
     max_clips   = 8.0
     clip_length = 2.0
@@ -197,7 +202,11 @@ def status(render_id):
 
 if __name__ == '__main__':
     import time
-    request = {'title': 'CRypto-Currency', 'soundtrack': 'melodic'}
+
+    request = {'title': 'CRypto-Currency', 'soundtrack': 'disco',
+    'input_text':'''there is a decline in bitcoin price nowadays.This is due to ongoing war between russia and ukraine.The market is also taking a toll. The dollar is facing inflation.Alleluia praise the Lord.'''
+                }
+
     response = submit(request)
     print(response)
     time.sleep(30)

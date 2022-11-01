@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import pyttsx3
-import time
+# import pyttsx3
+# import time
 import spacy
 import pytextrank
 import pandas as pd
@@ -53,3 +53,7 @@ def our_keyword_extractor(para):
             
     return list(df['Keyword']),list(df['List of sentences'])
 
+if __name__ == "__main__":
+    para='there is a decline in bitcoin price nowadays. This is due to ongoing war between russia and ukraine. The market is also taking a toll. The dollar is facing inflation. Alleluia praise the Lord.'
+    var = our_keyword_extractor(para)
+    print(var)
