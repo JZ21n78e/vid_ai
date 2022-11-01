@@ -51,5 +51,5 @@ def our_keyword_extractor(para):
             df.at[i,'Keyword'] = input("New keyword?: ")
             
             
-    return list(df['Keyword'])
+    return list(df['Keyword']),list(df['List of sentences'])
 

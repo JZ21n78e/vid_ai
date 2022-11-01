@@ -33,13 +33,15 @@ configuration.api_key['DeveloperKey'] = shotstack_api_key
 
 def pexel_searcher():
     para='there is a decline in bitcoin price nowadays. This is due to ongoing war between russia and ukraine. The market is also taking a toll. The dollar is facing inflation. Alleluia praise the Lord.'
+    # para = "They decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under the tree and soon fell asleep."
+    # para = "The last goal doesn’t matter. The last victory, already forgotten. Yesterday is gone. Lost, in the record books. But today is up for grabs. Unpredictable. Unwritten. Undecided. “Now” is ours. Do something and be remembered. Or do nothing and be forgotten. No one owns today. Take it"
     print(para)
-    keyphrase = our_keyword_extractor(para=para)
+    keyphrase,sentences = our_keyword_extractor(para=para)
     pexels_api_key          = os.getenv("PEXELS_API_KEY")
     api                     = Pexels(pexels_api_key)
     pexel_videos = []
 
-    for keyword in keyphrase:
+    for sentence_index, keyword in enumerate(keyphrase):
         hd_file = None    
         search_videos = api.search_videos(
             query           = keyword,
@@ -54,7 +56,7 @@ def pexel_searcher():
             if hd_file is None:
                 hd_file = videos[0]
             
-            hd_file["keyword_caption"] = keyword # --------- testing keyword
+            hd_file["keyword_caption"] = sentences[sentence_index] # --------- testing keyword
         print(hd_file)
         print('-------------')
         pexel_videos.append(hd_file)
@@ -113,22 +115,31 @@ def submit(data):
                 hd_file = videos[index]
             
             # ---CAPTIONS---------------
-            htmlAsset = HtmlAsset(
-            html      = f'<p>{video["keyword_caption"]}</p>',
-            css       = 'p { color: #ffffff; } b { color: #ffff00; }',
-            width     = 400,
-            height    = 200,
-            background= 'transparent',
-            position  = 'center'
+            # htmlAsset = HtmlAsset(
+            # html      = f'<p>{video["keyword_caption"]}</p>',
+            # css       = 'p { color: #FFFF00; }',
+            # # width     = 800,
+            # # height    = 100,
+            # background= 'transparent',
+            # position  = 'bottom'
+            # )
+
+            title_asset = TitleAsset(
+            text        = video["keyword_caption"],
+            style       = "subtitle",
+            size        = "small",
+            color      = '#FFFF00',
+            position   = 'bottom',
             )
 
+
             Caption_clip = Clip(
-                asset     = htmlAsset,
+                asset     = title_asset,
                 start = video_start + (index * clip_length),
                 length    = clip_length,
                 fit       = 'crop',
                 scale     = 0.0,
-                position  = 'center',
+                position  = 'bottom',
                 opacity   = 1.0,
             )
 
@@ -185,11 +196,12 @@ def status(render_id):
 
 
 if __name__ == '__main__':
-    # import time
-    # request = {'title': 'CRypto-Currency', 'soundtrack': 'melodic'}
-    # response = submit(request)
-    # print(response)
-    # print(status(response.id))
-    print(status("6d06dbde-cc7b-49a2-88ac-ebe55a4222af"))
+    import time
+    request = {'title': 'CRypto-Currency', 'soundtrack': 'melodic'}
+    response = submit(request)
+    print(response)
+    time.sleep(30)
+    print(status(response.id))
+    # print(status("b319fa2f-ad66-4274-a7c5-bf99d2b1bad3"))
     # var = pexel_searcher()
     # print(var)
