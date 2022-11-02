@@ -28,7 +28,7 @@ def submit(data):
     pexel_videos = pexel_searcher(data.get('input_text'))
     min_clips   = 4.0
     max_clips   = 8.0
-    clip_length = 2.0
+    clip_length = 4.0
     video_start = 4.0
 
     with shotstack.ApiClient(configuration) as api_client:
@@ -85,6 +85,7 @@ def submit(data):
             size        = "small",
             color      = '#FFFF00',
             position   = 'bottom',
+            background = '#000000',
             )
 
 
@@ -120,7 +121,9 @@ def submit(data):
             )
 
         soundtrack = Soundtrack(
-            src         = f"{shotstack_assets_url}music/{data.get('soundtrack')}.mp3",
+            # src         = f"{shotstack_assets_url}music/{data.get('soundtrack')}.mp3",
+            src         = data.get('soundtrack'),
+            # src         = "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
             effect      = "fadeOut"
         )
 
@@ -145,15 +148,13 @@ def submit(data):
 def status(render_id):
     with shotstack.ApiClient(configuration) as api_client:
         api_instance = edit_api.EditApi(api_client)
-
-        
         return api_instance.get_render(render_id, data=True, merged=True)['response']
 
 
 if __name__ == '__main__':
     import time
     para = "Rabbit & tortoise decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under a tree and soon fell asleep."
-    request = {'title': 'Rabbit & tortoise', 'soundtrack': 'disco',
+    request = {'title': 'Rabbit & tortoise', 'soundtrack': "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
     'input_text':para}
     response = submit(request)
     print(response)
