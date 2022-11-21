@@ -14,6 +14,7 @@ from shotstack_sdk.model.video_asset import VideoAsset
 from shotstack_sdk.model.soundtrack  import Soundtrack
 from shotstack_sdk.model.transition  import Transition
 from shotstack_sdk.model.html_asset  import HtmlAsset
+from shotstack_sdk.model.audio_asset import AudioAsset
 
 from pexel_assest_fetcher import pexel_searcher
 load_dotenv()
@@ -23,6 +24,8 @@ shotstack_api_key       = os.getenv("SHOTSTACK_API_KEY")
 shotstack_assets_url    = os.getenv("SHOTSTACK_ASSETS_URL")
 configuration = shotstack.Configuration(host = shotstack_url)
 configuration.api_key['DeveloperKey'] = shotstack_api_key
+
+mcferin_mp3 ="https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3"
 
 def submit(data):
     pexel_videos = pexel_searcher(data.get('input_text'))
@@ -35,6 +38,7 @@ def submit(data):
         api_instance = edit_api.EditApi(api_client)
         video_clips  = []
         Caption_clips = []
+        audio_clips = []
 
         title_asset = TitleAsset(
             text        = data.get('title'),
@@ -101,6 +105,19 @@ def submit(data):
 
             Caption_clips.append(Caption_clip)
             
+            #---------audio_per-clip---------
+            audio_asset = AudioAsset(
+                src= mcferin_mp3,
+                trim= 2.0
+            )
+            audio_clip = Clip(
+                asset = audio_asset,
+                start = video_start + (index * clip_length),
+                length= clip_length
+            )
+
+            audio_clips.append(audio_clip)
+
             #-------VIDEO----------------
             video_asset = VideoAsset(
                 src = hd_file.get('link'),
@@ -121,6 +138,7 @@ def submit(data):
             )
 
         soundtrack = Soundtrack(
+            volume      = 0.25,
             # src         = f"{shotstack_assets_url}music/{data.get('soundtrack')}.mp3",
             src         = data.get('soundtrack'),
             # src         = "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
@@ -130,7 +148,7 @@ def submit(data):
         timeline = Timeline(
             background  = "#000000",
             soundtrack  = soundtrack,
-            tracks      = [Track(clips=Caption_clips),Track(clips=video_clips),Track(clips=[title_clip])]
+            tracks      = [Track(clips=Caption_clips),Track(clips=video_clips),Track(clips=[title_clip]),Track(clips=audio_clips)]
         )
 
         output = Output(
@@ -152,14 +170,15 @@ def status(render_id):
 
 
 if __name__ == '__main__':
-    import time
-    para = "Rabbit & tortoise decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under a tree and soon fell asleep."
-    request = {'title': 'Rabbit & tortoise', 'soundtrack': "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
-    'input_text':para}
-    response = submit(request)
-    print(response)
-    time.sleep(30)
-    print(status(response.id))
+    # import time
+    # para = "Rabbit & tortoise decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under a tree and soon fell asleep."
+    # request = {'title': 'Rabbit & tortoise', 'soundtrack': "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
+    # 'input_text':para}
+    # response = submit(request)
+    # print(response)
+    # time.sleep(60)
+    # print(status(response.id))
+    print(status('c226e6fc-9909-4005-8391-db3a48cf0d09'))
     # # print(status("b319fa2f-ad66-4274-a7c5-bf99d2b1bad3"))
     # var = pexel_searcher('asd')
     # print(var)
