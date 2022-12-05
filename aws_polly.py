@@ -6,16 +6,18 @@ import os
 import sys
 import subprocess
 from tempfile import gettempdir
-
+from aws_s3 import upload_file
 # Create a client using the credentials and region defined in the [adminuser]
 # section of the AWS credentials file (~/.aws/credentials).
-session = Session(profile_name="default")
+session = Session(profile_name="jayson",region_name='ap-southeast-2')
+print(session.available_profiles)
 polly = session.client("polly")
 
 try:
     # Request speech synthesis
-    response = polly.synthesize_speech(Text="Rabbit & tortoise decided to settle the argument with a race.", OutputFormat="mp3",
+    response = polly.synthesize_speech(Text="Rabbit & tortoise decided to settle the argument with a race. then they began running like mad !", OutputFormat="mp3",
                                         VoiceId="Joanna")
+    print(response)
 except (BotoCoreError, ClientError) as error:
     # The service returned an error, exit gracefully
     print(error)
@@ -33,7 +35,7 @@ if "AudioStream" in response:
            try:
             # Open a file for writing the output as a binary stream
                 with open(output, "wb") as file:
-                   file.write(stream.read())
+                    file.write(stream.read())
            except IOError as error:
               # Could not write to file, exit gracefully
               print(error)
