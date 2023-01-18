@@ -3,3 +3,4 @@ python-dotenv==0.20.0
 shotstack_sdk==0.2.5
 spacy
 pytextrank
+boto3

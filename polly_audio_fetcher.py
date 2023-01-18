@@ -9,19 +9,21 @@ import os
 import sys
 import subprocess
 from tempfile import gettempdir
+from pathlib import Path
 
 from aws_s3 import upload_file as aws_s3_uploadfile
-
+import uuid
 
 
 def pollyfy(para):
     '''
     takes a paragraph as input and returns list of s3 url of uploaded polly sentences 
     '''
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_lg")
     doc = nlp(para)
     sentences = [sent.text.strip() for sent in doc.sents]
     url_lists=aws_polly_s3(sentences)
+    print("DEBUG: S3URL LIST:  ",url_lists)
     return url_lists
 
 def aws_polly_s3(sentences):
@@ -35,7 +37,7 @@ def aws_polly_s3(sentences):
     s3_url_list=[]
     s3_url_header ='''https://s3.ap-southeast-2.amazonaws.com/com.21n78e.pollyfiles/'''
     for i,sentence in enumerate(sentences):
-        file_name = f"speech_{i}.mp3"
+        file_name = f"speech_{uuid.uuid1()}.mp3"
         s3_url_list.append(s3_url_header+file_name)
         try:
             # Request speech synthesis
@@ -49,7 +51,7 @@ def aws_polly_s3(sentences):
         if "AudioStream" in response:
                 with closing(response["AudioStream"]) as stream:
                     output = os.path.join(gettempdir(), file_name)
-
+                    print(f"DEBUG: Temp dir == {output}")
                     try:
                         # Open a file for writing the output as a binary stream
                             with open(output, "wb") as file:

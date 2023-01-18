@@ -30,8 +30,8 @@ configuration.api_key['DeveloperKey'] = shotstack_api_key
 mcferin_mp3 ="https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3"
 
 def submit(data):
-    pexel_videos = pexel_searcher(data.get('input_text'))#urls of video clips of sentences 
-    audio_s3urls = pollyfy(data.get('input_text')) #urls of audio clips of sentences 
+    pexel_videos = pexel_searcher(data.get('search'))#urls of video clips of sentences 
+    audio_s3urls = pollyfy(data.get('search')) #urls of audio clips of sentences 
     min_clips   = 4.0
     max_clips   = 8.0
     clip_length = 4.0
@@ -109,10 +109,12 @@ def submit(data):
             Caption_clips.append(Caption_clip)
             
             #---------audio_per-clip---------
+
             audio_asset = AudioAsset(
                 src= audio_s3urls[index],
                 # trim= 2.0
             )
+
             audio_clip = Clip(
                 asset = audio_asset,
                 start = video_start + (index * clip_length),
@@ -143,8 +145,9 @@ def submit(data):
         soundtrack = Soundtrack(
             volume      = 0.01,
             # src         = f"{shotstack_assets_url}music/{data.get('soundtrack')}.mp3",
-            src         = data.get('soundtrack'),
-            # src         = "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
+            # src         = data.get('soundtrack'),
+            # src         = "https://s3.ap-southeast-2.amazonaws.com/com.21n78e.pollyfiles/ytmp3free.cc_vigiland-friday-night-youtubemp3free.org.mp3",
+            src         = mcferin_mp3,
             effect      = "fadeOut"
         )
 
@@ -174,9 +177,9 @@ def status(render_id):
 
 if __name__ == '__main__':
     import time
-    para = "Rabbit & tortoise decided to settle the argument with a race. They agreed on a route and started off the race. The rabbit shot ahead and ran briskly for some time. Then seeing that he was far ahead of the tortoise, he thought he'd sit under a tree for some time and relax before continuing the race. He sat under a tree and soon fell asleep."
-    request = {'title': 'Rabbit & tortoise', 'soundtrack': "https://feeds.soundcloud.com/stream/824693758-unminus-majesty.mp3",
-    'input_text':para}
+    para = "The Yellow Wallpaper by Charlotte Perkins Gilman . explores a woman's descent into madness after she's confined to a room . with yellow wallpaper.to help her nervous disorder. It is a groundbreaking short story. that drew attention to mental health. and women's rights when it was released and has influenced many writers., including Alice Walker and Sylvia Plath."
+    request = {'title': 'Rabbit & tortoise', 'soundtrack': "https://s3.ap-southeast-2.amazonaws.com/com.21n78e.pollyfiles/ytmp3free.cc_vigiland-friday-night-youtubemp3free.org.mp3",
+    'search':para}
     response = submit(request)
     print(response)
     time.sleep(90)
@@ -185,4 +188,10 @@ if __name__ == '__main__':
     # # print(status("b319fa2f-ad66-4274-a7c5-bf99d2b1bad3"))
     # var = pexel_searcher('asd')
     # print(var)
-    
+
+def status(render_id):
+    with shotstack.ApiClient(configuration) as api_client:
+        api_instance = edit_api.EditApi(api_client)
+
+        print(api_instance.get_render(render_id, data=True, merged=True)['response'])
+        return api_instance.get_render(render_id, data=True, merged=True)['response']

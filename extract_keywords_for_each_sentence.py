@@ -12,7 +12,7 @@ def our_keyword_extractor(para):
 
     '''
 
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_lg")
     doc = nlp(para)
     sentences = [sent.text.strip() for sent in doc.sents]
     
@@ -51,9 +51,9 @@ def our_keyword_extractor(para):
     for i in range(len(df)):
         print(df.iloc[i])
         print("\n")
-        response=input("Do you wish to change the keyword?: ")
-        if response=='y':
-            df.at[i,'Keyword'] = input("New keyword?: ")
+        # response=input("Do you wish to change the keyword?: ")
+        # if response=='y':
+        #     df.at[i,'Keyword'] = input("New keyword?: ")
             
             
     return list(df['Keyword']),list(df['List of sentences'])

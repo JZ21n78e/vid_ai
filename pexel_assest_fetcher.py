@@ -29,6 +29,7 @@ def pexel_searcher(para):
             orientation     = '', size='', color='', locale='', page=1,
             per_page        = 1
         )
+        print("DEBUG: ",search_videos)
         for index, video in enumerate(search_videos.get('videos')):
             videos  = video.get('video_files')
             for entry in videos:
